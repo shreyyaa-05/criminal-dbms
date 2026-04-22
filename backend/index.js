@@ -2,12 +2,10 @@ import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import bodyParser from "body-parser";
-import criminalRoute from "./routes/data.js"
-
-console.log(process.env.DB_PASSWORD);
-
+import criminalRoute from "./routes/data.js";
 
 dotenv.config();
+
 const app = express();
 app.use(express.json());
 app.use(cors());
