@@ -4,7 +4,7 @@ import cors from "cors";
 import bodyParser from "body-parser";
 import criminalRoute from "./routes/data.js"
 
-
+console.log(process.env.DB_PASSWORD);
 
 
 dotenv.config();

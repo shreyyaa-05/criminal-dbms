@@ -10,6 +10,7 @@ import CriminalCard from '../components/search/searchCard';
 const SearchPage = () => {
   const [filters, setFilters] = useState({
     age: '',
+    prison:'',
     gender: '',
     crimeType: '',
     location: '',
@@ -40,6 +41,12 @@ const SearchPage = () => {
     setCriminalData(result.data);
     console.log(result);
   };
+  const loadAllCriminals = async () => {
+ const result = await axios.get(
+ "http://localhost:8000/allCriminals"
+ );
+ setCriminalData(result.data);
+};
 
   return (
    <div className='seacrConatiner'>
@@ -110,7 +117,13 @@ const SearchPage = () => {
           {/* Add more filters to the third column */}
         </div>
       </div>
-      <button onClick={handleSearch}>Search</button>
+      <button onClick={handleSearch}>
+ Search
+</button>
+
+<button onClick={loadAllCriminals}>
+ Reset
+</button>
     </div>
     <div className="criminals-list">
       {criminalData.map((criminal, index) => (

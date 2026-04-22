@@ -6,25 +6,41 @@ import Upcoming from '../components/upcoming/upcoming_event'
 
 
 export default function Home() {
-  
 
-  return (
-    < div className='home'>
-      <Navbar />
-      <div className="contone">
-        <div className="contonecont">
-          <span className='lonetit' > <b>Hii, Welcome to WikiCrime <br /> <span style={{ paddingLeft: 250 }}>Search for any Records or Register complaint</span></b></span><br /><br /><br />
-          <div className="lonecontent" >Lorem ipsum, dolor sit amet consectetur adipisicing elit. Magni corporis quae maxime nulla officia iste dolore odit, iure ad esse obcaecati nihil sit assumenda alias modi nostrum unde quasi aperiam.</div><br /><br />
+ return (
+  <div className='home'>
+    <Navbar />
 
-          {/* <div className="input-group" id="#searchbox" >
-            <input type="text" name="text" className="input" id="Email" placeholder="search Criminal record" />
-            <button className="button--submit" >SEARCH</button>
-          </div> */}
+    <div className="contone">
+
+      <div className="hero-content">
+
+        <p className="hero-badge">
+          Crime Intelligence Portal
+        </p>
+
+        <h1>
+          Search Criminal Records <br/>
+          Track Cases. Report Crime.
+        </h1>
+
+        <p className="hero-subtext">
+          Access criminal records, register complaints and monitor
+          investigations through a centralized portal.
+        </p>
+
+        <div className="hero-buttons">
+          <button>Search Records</button>
+          <button className="secondary">
+             Register Complaint
+          </button>
         </div>
-        {/* SEARCHBAR */}
-        
+
       </div>
-      <Footer />
+
     </div>
-  )
+
+    <Footer />
+  </div>
+ )
 }

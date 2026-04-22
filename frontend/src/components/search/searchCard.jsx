@@ -26,6 +26,9 @@ const CriminalCard = ({data}) => {
         <p><strong>Case Description:</strong> {case_description}</p>
         <p><strong>Prison Name:</strong> {prison_name}</p>
         <p><strong>Status:</strong> {status}</p>
+        <button>
+          View Full Record
+          </button>
       </div>
     </div>
   );

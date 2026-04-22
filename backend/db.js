@@ -1,13 +1,9 @@
 import mysql from "mysql2";
 
 export const db = mysql.createConnection({
-    host: "localhost",
+    host: process.env.DB_HOST || "localhost",
     port: "3306",
-    user: "root",
-    password: "Deep@123",
-    database: "criminaldb",
+    user: process.env.DB_USER || "root",
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME || "criminaldb",
 });
-
-
-
-

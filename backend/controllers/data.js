@@ -134,10 +134,10 @@ export const getCriminalsByFilters = async (req, res, next) => {
     conditions.push('Crimes.crime_name = ?');
     values.push(filters.crimeType);
   }
-  if (filters.age) {
-    conditions.push('Prison.prison_name= ?');
-    values.push(filters.prison);
-  }
+  if (filters.prison) {
+  conditions.push('Prison.prison_name = ?');
+  values.push(filters.prison);
+}
   if (filters.name) {
     conditions.push('Criminals.first_name = ?');
     values.push(filters.name);
