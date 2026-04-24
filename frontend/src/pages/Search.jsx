@@ -22,7 +22,7 @@ const SearchPage = () => {
   const [loading, setLoading] = useState(false);
 
   useEffect(()=>{
-setCriminalData([]);
+loadAllCriminals();
 },[]);
 
   // Fetch all criminals with joined data from backend
@@ -144,7 +144,6 @@ setCriminalData([]);
               <div className="filter-section">
                 <label htmlFor="crimeType">Crime Type:</label>
                 <select
-id="crimeType"
 value={filters.crimeType}
 onChange={(e)=>
 handleFilterChange(
@@ -152,23 +151,11 @@ handleFilterChange(
 e.target.value
 )}
 >
-
-<option value="">
-All Crimes
-</option>
-
-<option value="Robbery">
-Robbery
-</option>
-
-<option value="Homicide">
-Homicide
-</option>
-
-<option value="Cyber Fraud">
-Cyber Fraud
-</option>
-
+<option value="">All Crimes</option>
+<option value="Robbery">Robbery</option>
+<option value="Homicide">Homicide</option>
+<option value="Cyber Fraud">Cyber Fraud</option>
+<option value="Money Laundering">Money Laundering</option>
 </select>
               </div>
               <div className="filter-section">
@@ -231,9 +218,11 @@ Connaught Place
                   onChange={(e) => handleFilterChange('sentenceStatus', e.target.value)}
                 >
                   <option value="">All</option>
-                  <option value="Open">Open</option>
-                  <option value="Closed">Closed</option>
-                  <option value="Under Investigation">Under Investigation</option>
+<option value="Open">Open</option>
+<option value="Closed">Closed</option>
+<option value="Critical">Critical</option>
+<option value="High">High</option>
+<option value="Medium">Medium</option>
                 </select>
               </div>
             </div>

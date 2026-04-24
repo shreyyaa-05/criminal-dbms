@@ -4,7 +4,9 @@ const CriminalCard = ({ data }) => {
 
 return (
 <div className="card">
-
+<span className={`status-chip ${data.status?.toLowerCase()}`}>
+{data.status}
+</span>
 <p className="card-title">
 {data.first_name} {data.last_name}
 <span className="gender-badge">
