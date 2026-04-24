@@ -159,47 +159,91 @@ export const getCriminalsByStatus = async (req, res, next) => {
 
 
 
+export const getCriminalsByFilters=(req,res)=>{
 
-export const getCriminalsByFilters = async (req, res, next) => {
-  const filters = req.body;
-  const conditions = [];
-  const values = [];
+const filters=req.body;
 
-  if (filters.crimeType) {
-    conditions.push('Crimes.crime_name = ?');
-    values.push(filters.crimeType);
-  }
-  if (filters.prison) {
-  conditions.push('Prison.prison_name = ?');
-  values.push(filters.prison);
+const conditions=[];
+const values=[];
+
+if(filters.crimeType){
+conditions.push(
+'Crimes.crime_name = ?'
+);
+values.push(filters.crimeType);
 }
-  if (filters.name) {
-    conditions.push('Criminals.first_name = ?');
-    values.push(filters.name);
-  }
-  if (filters.location) {
-    conditions.push('Cases.location = ?');
-    values.push(filters.location);
-  }
-  if (filters.sentenceStatus) {
-    conditions.push('Cases.status = ?');
-    values.push(filters.sentenceStatus);
-  }
-  var sql = `SELECT Criminals.first_name, Criminals.last_name,Criminals.gender,Criminals.address,Prison.prison_name,Cases.case_description,Cases.status, Crimes.crime_name FROM Criminals JOIN Crimes ON Criminals.crime_id = Crimes.crime_id JOIN Cases ON Cases.case_id = Criminals.case_id JOIN Prison ON Prison.prison_id = Criminals.prison_id  `;
 
-  if (conditions.length > 0) {
-    sql += ` WHERE ${conditions.join(' AND ')}`;
-  }
+if(filters.prison){
+conditions.push(
+'Prison.prison_name = ?'
+);
+values.push(filters.prison);
+}
 
-  db.query(sql, values, (err, data) => {
-    if (err) {
-      console.error(err);
-      return res.status(500).json({ error: 'An error occurred' });
-    }
-    res.json(data);
-  });
+if(filters.name){
+conditions.push(
+'Criminals.first_name LIKE ?'
+);
+values.push(`%${filters.name}%`);
+}
+
+if(filters.location){
+conditions.push(
+'Cases.location = ?'
+);
+values.push(filters.location);
+}
+
+if(filters.sentenceStatus){
+conditions.push(
+'Cases.status = ?'
+);
+values.push(filters.sentenceStatus);
+}
+
+let sql=`
+SELECT
+Criminals.criminal_id,
+Criminals.first_name,
+Criminals.last_name,
+Criminals.gender,
+Criminals.address,
+Cases.location,
+Cases.case_description,
+Cases.status,
+Crimes.crime_name,
+Prison.prison_name
+
+FROM Criminals
+
+JOIN Crimes
+ON Criminals.crime_id=Crimes.crime_id
+
+JOIN Cases
+ON Criminals.case_id=Cases.case_id
+
+LEFT JOIN Prison
+ON Criminals.prison_id=Prison.prison_id
+`;
+
+if(conditions.length>0){
+sql +=
+' WHERE ' + conditions.join(' AND ');
+}
+
+db.query(
+sql,
+values,
+(err,data)=>{
+if(err){
+console.error(err);
+return res.status(500).json(err);
+}
+res.json(data);
+}
+);
+
 };
-
 
 
 
