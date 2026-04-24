@@ -1,5 +1,5 @@
 import express from "express";
-import { regComplaint , getAllCriminals,getHotspots, getCriminalsByCrime, getCriminalsByFilters,getFeaturedCases, getCriminalsByGender, getCriminalsByLocation, getCriminalsByPrison, getCriminalsByStatus, getCriminalsByYear, register, login, getComplaint } from "../controllers/data.js"
+import { regComplaint , getAllCriminals,getHotspots, getEvidence,getCriminalsByCrime, getCriminalsByFilters,getFeaturedCases, getCriminalsByGender, getCriminalsByLocation, getCriminalsByPrison, getCriminalsByStatus, getCriminalsByYear, register, login, getComplaint } from "../controllers/data.js"
 
 const router = express.Router();
 
@@ -19,5 +19,5 @@ router.post("/register",register)
 router.post("/login",login)
 router.post("/getcomplaint",getComplaint)
 router.get("/hotspots",getHotspots)
-
+router.get("/evidence",getEvidence)
 export default router;

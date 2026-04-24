@@ -298,28 +298,58 @@ export const login = async (req, res, next) => {
     next(err);
   }
 };
-export const getFeaturedCases = (req,res)=>{
+export const getFeaturedCases=(req,res)=>{
 const q=`
 SELECT
+case_id,
 case_description,
 location,
 date_committed,
-status
-FROM cases
+status,
+
+CASE location
+WHEN 'Rohini'
+THEN '28.7495,77.0565'
+
+WHEN 'Dwarka'
+THEN '28.5921,77.0460'
+
+WHEN 'Saket'
+THEN '28.5245,77.2066'
+
+WHEN 'Connaught Place'
+THEN '28.6315,77.2167'
+
+WHEN 'Lajpat Nagar'
+THEN '28.5677,77.2433'
+
+ELSE '28.6139,77.2090'
+END AS coordinates,
+
+'Cyber Crime' as crime_name
+
+FROM Cases
+
 ORDER BY
 CASE
- WHEN status='Critical' THEN 1
- WHEN status='High' THEN 2
- ELSE 3
+WHEN status='Critical' THEN 1
+WHEN status='High' THEN 2
+ELSE 3
 END
+
 LIMIT 6
 `;
 
 db.query(q,(err,data)=>{
- if(err) return res.status(500).json(err);
- return res.status(200).json(data);
-});
+if(err){
+return res.status(500).json(err);
 }
+
+return res.json(data);
+
+});
+
+};
 export const getHotspots=(req,res)=>{
 const q=`
 SELECT
@@ -340,3 +370,17 @@ db.query(q,(err,data)=>{
  return res.status(200).json(data);
 });
 }
+export const getEvidence=(req,res)=>{
+res.json([
+{
+lat:28.6139,
+lng:77.2090,
+description:"Fingerprint evidence"
+},
+{
+lat:28.5355,
+lng:77.3910,
+description:"Weapon recovered"
+}
+]);
+};

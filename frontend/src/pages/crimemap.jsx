@@ -33,12 +33,13 @@ const CrimeMap = () => {
   });
   const [heatActive, setHeatActive] = useState(false);
   const [evidenceActive, setEvidenceActive] = useState(false);
-  let chartRef = null;
+  const chartRef = useRef(null);
 
   // Fetch areas & crimes for dropdowns
   useEffect(() => {
-    axios.get('http://localhost:5000/api/areas').then(res => setAreas(res.data));
-    axios.get('http://localhost:5000/api/crimes').then(res => setCrimes(res.data));
+    axios.get("http://localhost:8000/allCriminals/hotspots").then(res => setAreas(res.data));
+    axios.get("http://localhost:8000/allCriminals/byCrimes")
+.then(res => setCrimes(res.data));
   }, []);
 
   // Fetch cases with current filters
@@ -48,7 +49,9 @@ const CrimeMap = () => {
     if (filters.crime !== 'all') params.crime_id = filters.crime;
     if (filters.fromDate) params.from_date = filters.fromDate;
     if (filters.toDate) params.to_date = filters.toDate;
-    const res = await axios.get('http://localhost:5000/api/cases', { params });
+    const res = await axios.get(
+'http://localhost:8000/allCriminals/featuredCases'
+);
     setCases(res.data);
   };
 
@@ -97,16 +100,39 @@ const CrimeMap = () => {
     if (heatActive) updateHeatmap();
   }, [cases, heatActive]);
 
-  const updateHeatmap = () => {
-    if (heatLayerRef.current) mapRef.current.removeLayer(heatLayerRef.current);
-    if (!heatActive) return;
-    const points = cases.map(c => {
-      const [lat, lng] = c.coordinates.split(',').map(Number);
-      return [lat, lng, 0.8];
-    }).filter(p => !isNaN(p[0]));
-    heatLayerRef.current = L.heatLayer(points, { radius: 25, blur: 15 });
-    mapRef.current.addLayer(heatLayerRef.current);
-  };
+  const updateHeatmap=()=>{
+
+if(heatLayerRef.current){
+mapRef.current.removeLayer(
+heatLayerRef.current
+);
+}
+
+if(!heatActive) return;
+
+const points=
+cases
+.filter(c=>c.coordinates)
+.map(c=>{
+const [lat,lng]=
+c.coordinates.split(',')
+.map(Number);
+
+return [lat,lng,0.8];
+})
+.filter(p=>!isNaN(p[0]));
+
+heatLayerRef.current=
+L.heatLayer(points,{
+radius:25,
+blur:15
+});
+
+mapRef.current.addLayer(
+heatLayerRef.current
+);
+
+};
 
   useEffect(() => { updateHeatmap(); }, [heatActive, cases]);
 
@@ -116,7 +142,7 @@ const CrimeMap = () => {
       evidenceLayerRef.current = null;
       setEvidenceActive(false);
     } else {
-      const res = await axios.get('http://localhost:5000/api/evidence');
+      const res = await axios.get('http://localhost:8000/allCriminals/evidence');
       const evidence = res.data;
       evidenceLayerRef.current = L.layerGroup();
       evidence.forEach(ev => {
@@ -133,42 +159,100 @@ const CrimeMap = () => {
   };
 
   // Chart & table update
-  useEffect(() => {
-    const canvas = document.getElementById('peak-time-chart');
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    const hourCounts = new Array(24).fill(0);
-    cases.forEach(c => {
-      const hour = new Date(c.date_committed).getHours();
-      if (!isNaN(hour)) hourCounts[hour]++;
-    });
-    if (chartRef) chartRef.destroy();
-    chartRef = new Chart(ctx, {
-      type: 'bar',
-      data: {
-        labels: Array.from({ length: 24 }, (_, i) => `${i}:00`),
-        datasets: [{ label: 'Crimes', data: hourCounts, backgroundColor: '#3b82f6', borderRadius: 6 }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: true,
-        plugins: { legend: { labels: { color: '#cbd5e1' } } },
-        scales: { y: { grid: { color: '#334155' }, ticks: { color: '#94a3b8' } }, x: { ticks: { color: '#cbd5e1', maxRotation: 45 } } }
-      }
-    });
+  useEffect(()=>{
+
+const canvas=document.getElementById('peak-time-chart');
+if(!canvas) return;
+
+const ctx=canvas.getContext('2d');
+
+if(chartRef.current){
+chartRef.current.destroy();
+}
+
+const hourCounts=new Array(24).fill(0);
+
+cases.forEach(c=>{
+if(!c.date_committed) return;
+
+const hour=new Date(c.date_committed).getHours();
+
+if(!isNaN(hour)){
+hourCounts[hour]++;
+}
+});
+
+chartRef.current=new Chart(ctx,{
+type:'bar',
+data:{
+labels:Array.from(
+{length:24},
+(_,i)=>`${i}:00`
+),
+datasets:[
+{
+label:'Crimes',
+data:hourCounts
+}
+]
+},
+options:{
+responsive:true,
+maintainAspectRatio:true
+}
+});
+
+
+const crimeMap=new Map();
+
+cases.forEach(c=>{
+const crime=c.crime_name || 'Unknown';
+crimeMap.set(
+crime,
+(crimeMap.get(crime)||0)+1
+);
+});
+
+const sorted=
+Array.from(crimeMap.entries())
+.sort((a,b)=>b[1]-a[1]);
+
+const tbody=
+document.getElementById(
+'crime-table-body'
+);
+
+if(tbody){
+tbody.innerHTML=
+sorted.length
+? sorted.map(
+([name,count])=>
+`<tr>
+<td>${name}</td>
+<td style="font-weight:600;">
+${count}
+</td>
+</tr>`
+).join('')
+:
+`<tr>
+<td colspan="2">
+No data
+</td>
+</tr>`;
+}
+
+return ()=>{
+if(chartRef.current){
+chartRef.current.destroy();
+chartRef.current=null;
+}
+};
+
+},[cases]);
 
     // Crime breakdown table
-    const crimeMap = new Map();
-    cases.forEach(c => crimeMap.set(c.crime_name, (crimeMap.get(c.crime_name) || 0) + 1));
-    const sorted = Array.from(crimeMap.entries()).sort((a, b) => b[1] - a[1]);
-    const tbody = document.getElementById('crime-table-body');
-    if (tbody) {
-      tbody.innerHTML = sorted.map(([name, count]) => `
-        <tr><td>${name}</td><td style="font-weight:600;">${count}</td></tr>
-      `).join('');
-      if (sorted.length === 0) tbody.innerHTML = '<tr><td colspan="2">No data for filters</td></tr>';
-    }
-  }, [cases]);
+    
 
   return (
     <div style={{ padding: '1rem', background: '#0f172a', borderRadius: '24px', marginTop: '1rem' }}>
@@ -176,11 +260,25 @@ const CrimeMap = () => {
       <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginBottom: '1rem', background: '#1e293b', padding: '1rem', borderRadius: '20px' }}>
         <select value={filters.area} onChange={e => setFilters({...filters, area: e.target.value})}>
           <option value="all">All Areas</option>
-          {areas.map(a => <option key={a.area_id} value={a.area_id}>{a.area_name}</option>)}
+          {areas.map((a,index)=>(
+<option
+key={`${a.area_name}-${index}`}
+value={a.area_name}
+>
+{a.area_name}
+</option>
+))}
         </select>
         <select value={filters.crime} onChange={e => setFilters({...filters, crime: e.target.value})}>
           <option value="all">All Crimes</option>
-          {crimes.map(c => <option key={c.crime_id} value={c.crime_id}>{c.crime_name}</option>)}
+          {crimes.map((c,index)=>(
+<option
+key={`${c.crime_id}-${index}`}
+value={c.crime_id}
+>
+{c.crime_name}
+</option>
+))}
         </select>
         <input type="date" value={filters.fromDate} onChange={e => setFilters({...filters, fromDate: e.target.value})} placeholder="From" />
         <input type="date" value={filters.toDate} onChange={e => setFilters({...filters, toDate: e.target.value})} placeholder="To" />
@@ -198,7 +296,7 @@ const CrimeMap = () => {
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           <div style={{ background: '#1e293b', borderRadius: '20px', padding: '1rem' }}>
             <h3 style={{ color: '#e2e8f0', marginBottom: '0.5rem' }}>⏱️ Peak Time (Hourly)</h3>
-            <canvas id="peak-time-chart" height="200" style={{ width: '100%' }}></canvas>
+            <canvas key={cases.length} id="peak-time-chart" height="200" style={{ width: '100%' }}></canvas>
           </div>
           <div style={{ background: '#1e293b', borderRadius: '20px', padding: '1rem' }}>
             <h3 style={{ color: '#e2e8f0', marginBottom: '0.5rem' }}>📊 Top Crime Types</h3>
