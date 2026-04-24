@@ -1,4 +1,5 @@
-import React from 'react';
+import React,{useEffect,useState} from 'react';
+import axios from "axios";
 import { useNavigate } from 'react-router-dom';
 import './home.css';
 import Navbar from '../components/navbar/navbar';
@@ -9,6 +10,17 @@ import heroImage from './home.jpg'; // replace with your actual image
 
 export default function Home() {
   const navigate = useNavigate();
+  const [featuredCases,setFeaturedCases]=useState([]);
+
+useEffect(()=>{
+ const loadCases=async()=>{
+ const res=await axios.get(
+ "http://localhost:8000/allCriminals/featuredCases"
+ );
+ setFeaturedCases(res.data);
+ };
+ loadCases();
+},[]);
 
   // Original navigation actions – unchanged
   const handleSearch = () => navigate('/search');
@@ -109,24 +121,26 @@ export default function Home() {
           <h2 className="cases-title">High‑Priority Investigations</h2>
         </div>
         <div className="cases-grid">
-          <div className="case-card">
-            <div className="case-status critical">CRITICAL</div>
-            <h3>Operation Nightfall</h3>
-            <p>Cyber crime syndicate · 12 suspects identified</p>
-            <div className="case-meta">Updated 2 hours ago</div>
-          </div>
-          <div className="case-card">
-            <div className="case-status high">HIGH</div>
-            <h3>Evidence Delta-7</h3>
-            <p>Forensic analysis · DNA match pending</p>
-            <div className="case-meta">Updated yesterday</div>
-          </div>
-          <div className="case-card">
-            <div className="case-status medium">MEDIUM</div>
-            <h3>Urban Surveillance</h3>
-            <p>Pattern recognition · 8 new leads</p>
-            <div className="case-meta">Updated 5 hours ago</div>
-          </div>
+          {featuredCases.map((item,index)=>(
+<div className="case-card" key={index}>
+
+<div className={`case-status ${
+index===0?"critical":
+index===1?"high":"medium"
+}`}>
+{item.status}
+</div>
+
+<h3>{item.location}</h3>
+
+<p>{item.case_description}</p>
+
+<div className="case-meta">
+{item.date_committed}
+</div>
+
+</div>
+))}
         </div>
         <div className="cases-footer">
           <button className="view-all-btn" onClick={handleSearch}>

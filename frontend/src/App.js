@@ -13,14 +13,22 @@ function App() {
   return (
     <ComplaintState>
     <Router>   
-        <Routes> 
-                <Route exact path='/' element={< Home />}></Route> 
-                <Route exact path='/search' element={< Search />}></Route> 
-                <Route exact path='/complaint' element={< Complaint />}></Route> 
-                <Route exact path='/news' element={< NewsPage />}></Route>
-                <Route exact path='/login' element={< AuthForm />}></Route>
-                <Route exact path='/admin' element={< ComplaintList />}></Route>
-        </Routes> 
+        <Routes>
+<Route exact path='/' element={<Home/>}></Route>
+
+<Route path='/hotspots' element={<Home/>}></Route>
+
+<Route exact path='/search' element={<Search/>}></Route>
+
+<Route exact path='/complaint' element={<Complaint/>}></Route>
+
+<Route exact path='/news' element={<NewsPage/>}></Route>
+
+<Route exact path='/login' element={<AuthForm/>}></Route>
+
+<Route exact path='/admin' element={<ComplaintList/>}></Route>
+
+</Routes>
     </Router> 
     </ComplaintState>
   );

@@ -88,17 +88,24 @@ export const getCriminalsByGender = async (req, res, next) => {
 
   })
 };
-export const getCriminalsByLocation = async (req, res, next) => {
+export const getCriminalsByLocation = async (req,res)=>{
+const qry=`
+SELECT Criminals.first_name,
+Criminals.last_name,
+Cases.case_description,
+Cases.location
+FROM Criminals
+JOIN Cases
+ON Criminals.case_id=Cases.case_id
+WHERE Cases.location IN
+('Rohini','Dwarka','Saket','Connaught Place','Lajpat Nagar')
+`;
 
-  const qry = "SELECT Criminals.first_name, Criminals.last_name,Cases.case_description FROM Criminals JOIN Cases ON Criminals.case_id=Cases.case_id WHERE Cases.location='Mumbai' ";
-  db.query(qry, (err, data) => {
-    if (err) {
-      console.log(err);
-    }
-    res.json(data);
-
-  })
-};
+db.query(qry,(err,data)=>{
+ if(err) console.log(err);
+ res.json(data);
+});
+}
 export const getCriminalsByYear = async (req, res, next) => {
 
   const qry = "SELECT Criminals.first_name, Criminals.last_name,Cases.case_description FROM Criminals JOIN Cases ON Criminals.case_id=Cases.case_id WHERE Cases.date_committed='2023-01-15'";
@@ -223,3 +230,45 @@ export const login = async (req, res, next) => {
     next(err);
   }
 };
+export const getFeaturedCases = (req,res)=>{
+const q=`
+SELECT
+case_description,
+location,
+date_committed,
+status
+FROM cases
+ORDER BY
+CASE
+ WHEN status='Critical' THEN 1
+ WHEN status='High' THEN 2
+ ELSE 3
+END
+LIMIT 6
+`;
+
+db.query(q,(err,data)=>{
+ if(err) return res.status(500).json(err);
+ return res.status(200).json(data);
+});
+}
+export const getHotspots=(req,res)=>{
+const q=`
+SELECT
+a.area_name,
+COUNT(c.case_id) AS cases_count
+FROM area a
+LEFT JOIN cases c
+ON a.area_id=c.area_id
+GROUP BY a.area_id,a.area_name
+ORDER BY cases_count DESC
+LIMIT 5
+`;
+
+db.query(q,(err,data)=>{
+ if(err){
+   return res.status(500).json(err);
+ }
+ return res.status(200).json(data);
+});
+}
