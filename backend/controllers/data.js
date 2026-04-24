@@ -189,19 +189,19 @@ values.push(`%${filters.name}%`);
 
 if(filters.location){
 conditions.push(
-'Cases.location = ?'
+'location = ?'
 );
 values.push(filters.location);
 }
 
 if(filters.sentenceStatus){
 conditions.push(
-'Cases.status = ?'
+'status = ?'
 );
 values.push(filters.sentenceStatus);
 }
 
-let sql=`
+let sql = `
 SELECT
 Criminals.criminal_id,
 Criminals.first_name,
@@ -213,17 +213,13 @@ Cases.case_description,
 Cases.status,
 Crimes.crime_name,
 Prison.prison_name
-
 FROM Criminals
-
-JOIN Crimes
-ON Criminals.crime_id=Crimes.crime_id
-
 JOIN Cases
-ON Criminals.case_id=Cases.case_id
-
+ON Criminals.case_id = Cases.case_id
+JOIN Crimes
+ON Criminals.crime_id = Crimes.crime_id
 LEFT JOIN Prison
-ON Criminals.prison_id=Prison.prison_id
+ON Criminals.prison_id = Prison.prison_id
 `;
 
 if(conditions.length>0){
