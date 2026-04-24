@@ -50,7 +50,8 @@ const CrimeMap = () => {
     if (filters.fromDate) params.from_date = filters.fromDate;
     if (filters.toDate) params.to_date = filters.toDate;
     const res = await axios.get(
-'http://localhost:8000/allCriminals/featuredCases'
+'http://localhost:8000/allCriminals/featuredCases',
+{ params }
 );
     setCases(res.data);
   };
@@ -80,8 +81,10 @@ const CrimeMap = () => {
     clusterRef.current.clearLayers();
     const markers = [];
     cases.forEach(c => {
-      if (!c.coordinates) return;
-      const [lat, lng] = c.coordinates.split(',').map(Number);
+      const lat = Number(c.latitude);
+const lng = Number(c.longitude);
+
+
       if (isNaN(lat) || isNaN(lng)) return;
       const popup = `
         <b>Case #${c.case_id}</b><br>
@@ -112,20 +115,18 @@ if(!heatActive) return;
 
 const points=
 cases
-.filter(c=>c.coordinates)
-.map(c=>{
-const [lat,lng]=
-c.coordinates.split(',')
-.map(Number);
-
-return [lat,lng,0.8];
-})
-.filter(p=>!isNaN(p[0]));
+.filter(c=>c.latitude && c.longitude)
+.map(c=>[
+Number(c.latitude),
+Number(c.longitude),
+Math.random()*0.5 + 0.8
+]);
 
 heatLayerRef.current=
 L.heatLayer(points,{
-radius:25,
-blur:15
+radius:50,
+blur:35,
+maxZoom:14
 });
 
 mapRef.current.addLayer(
@@ -160,6 +161,7 @@ heatLayerRef.current
 
   // Chart & table update
   useEffect(()=>{
+    if(!cases.length) return;
 
 const canvas=document.getElementById('peak-time-chart');
 if(!canvas) return;
@@ -175,13 +177,13 @@ const hourCounts=new Array(24).fill(0);
 cases.forEach(c=>{
 if(!c.date_committed) return;
 
-const hour=new Date(c.date_committed).getHours();
+const hour = new Date(c.date_committed).getHours();
 
 if(!isNaN(hour)){
 hourCounts[hour]++;
 }
 });
-
+console.log(hourCounts);
 chartRef.current=new Chart(ctx,{
 type:'bar',
 data:{
@@ -192,7 +194,8 @@ labels:Array.from(
 datasets:[
 {
 label:'Crimes',
-data:hourCounts
+data:hourCounts,
+borderWidth:1
 }
 ]
 },
@@ -260,13 +263,15 @@ chartRef.current=null;
       <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginBottom: '1rem', background: '#1e293b', padding: '1rem', borderRadius: '20px' }}>
         <select value={filters.area} onChange={e => setFilters({...filters, area: e.target.value})}>
           <option value="all">All Areas</option>
-          {areas.map((a,index)=>(
+          {areas.map(a => (
+
 <option
-key={`${a.area_name}-${index}`}
-value={a.area_name}
+key={a.area_id}
+value={a.area_id}
 >
 {a.area_name}
 </option>
+
 ))}
         </select>
         <select value={filters.crime} onChange={e => setFilters({...filters, crime: e.target.value})}>

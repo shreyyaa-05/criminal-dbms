@@ -41,16 +41,24 @@ return res.json(data);
 });
 
 }
-export const getCriminalsByCrime = async (req, res, next) => {
+export const getCriminalsByCrime=(req,res)=>{
 
-  const qry = "SELECT Criminals.first_name, Criminals.last_name,Crimes.crime_name FROM Criminals JOIN Crimes ON Criminals.crime_id=Crimes.crime_id WHERE Crimes.crime_name='Robbery' ";
-  db.query(qry, (err, data) => {
-    if (err) {
-      console.log(err);
-    }
-    res.json(data);
+const qry=`
+SELECT DISTINCT
+crime_id,
+crime_name
+FROM Crimes
+ORDER BY crime_name
+`;
 
-  })
+db.query(qry,(err,data)=>{
+if(err){
+console.log(err);
+return res.status(500).json(err);
+}
+res.json(data);
+});
+
 };
 
 
@@ -299,49 +307,73 @@ export const login = async (req, res, next) => {
   }
 };
 export const getFeaturedCases=(req,res)=>{
-const q=`
-SELECT
-case_id,
-case_description,
-location,
-date_committed,
-status,
 
-CASE location
-WHEN 'Rohini'
-THEN '28.7495,77.0565'
-
-WHEN 'Dwarka'
-THEN '28.5921,77.0460'
-
-WHEN 'Saket'
-THEN '28.5245,77.2066'
-
-WHEN 'Connaught Place'
-THEN '28.6315,77.2167'
-
-WHEN 'Lajpat Nagar'
-THEN '28.5677,77.2433'
-
-ELSE '28.6139,77.2090'
-END AS coordinates,
-
-'Cyber Crime' as crime_name
+let q=`
+SELECT DISTINCT
+Cases.case_id,
+Cases.case_description,
+Cases.location,
+Cases.date_committed,
+Cases.status,
+COALESCE(Crimes.crime_name,'Unknown') as crime_name,
+Area.latitude,
+Area.longitude
 
 FROM Cases
 
-ORDER BY
-CASE
-WHEN status='Critical' THEN 1
-WHEN status='High' THEN 2
-ELSE 3
-END
+ JOIN Area
+ON Cases.area_id = Area.area_id
 
-LIMIT 6
+LEFT JOIN Criminals
+ON Cases.case_id = Criminals.case_id
+
+LEFT JOIN Crimes
+ON Criminals.crime_id = Crimes.crime_id
 `;
 
-db.query(q,(err,data)=>{
+const conditions=[];
+const vals=[];
+
+if(req.query.area_id && req.query.area_id !== "all"){
+conditions.push(
+"Cases.area_id = ?"
+);
+vals.push(req.query.area_id);
+}
+
+if(req.query.crime_id && req.query.crime_id !== "all"){
+conditions.push(
+"Criminals.crime_id = ?"
+);
+vals.push(req.query.crime_id);
+}
+
+if(req.query.from_date){
+conditions.push(
+"Cases.date_committed >= ?"
+);
+vals.push(req.query.from_date);
+}
+
+if(req.query.to_date){
+conditions.push(
+"Cases.date_committed <= ?"
+);
+vals.push(req.query.to_date);
+}
+
+if(conditions.length>0){
+q += " WHERE " + conditions.join(" AND ");
+}
+
+q += `
+ ORDER BY Cases.date_committed DESC
+ LIMIT 15
+`;
+
+db.query(q,vals,(err,data)=>{
 if(err){
+console.error(err);
 return res.status(500).json(err);
 }
 
@@ -351,36 +383,42 @@ return res.json(data);
 
 };
 export const getHotspots=(req,res)=>{
+
 const q=`
 SELECT
-a.area_name,
-COUNT(c.case_id) AS cases_count
-FROM area a
-LEFT JOIN cases c
-ON a.area_id=c.area_id
-GROUP BY a.area_id,a.area_name
-ORDER BY cases_count DESC
-LIMIT 5
+area_id,
+area_name,
+latitude,
+longitude
+FROM Area
+ORDER BY area_name
 `;
 
 db.query(q,(err,data)=>{
- if(err){
-   return res.status(500).json(err);
- }
- return res.status(200).json(data);
+if(err){
+return res.status(500).json(err);
+}
+res.json(data);
 });
-}
+
+};
 export const getEvidence=(req,res)=>{
-res.json([
-{
-lat:28.6139,
-lng:77.2090,
-description:"Fingerprint evidence"
-},
-{
-lat:28.5355,
-lng:77.3910,
-description:"Weapon recovered"
+
+const q=`
+SELECT
+Evidence.description,
+Area.latitude as lat,
+Area.longitude as lng
+FROM Evidence
+JOIN Area
+ON Evidence.area_id=Area.area_id
+`;
+
+db.query(q,(err,data)=>{
+if(err){
+return res.status(500).json(err);
 }
-]);
+res.json(data);
+});
+
 };
