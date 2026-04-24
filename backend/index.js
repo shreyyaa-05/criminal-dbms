@@ -4,6 +4,7 @@ import cors from "cors";
 import bodyParser from "body-parser";
 import criminalRoute from "./routes/data.js";
 
+
 dotenv.config();
 
 const app = express();

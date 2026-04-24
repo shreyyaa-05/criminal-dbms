@@ -1,0 +1,25 @@
+.map-btn {
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 40px;
+  padding: 0.5rem 1.2rem;
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #cbd5e1;
+}
+.map-btn.primary {
+  background: #3b82f6;
+  color: white;
+  border: none;
+}
+.map-btn.primary:hover {
+  background: #2563eb;
+  box-shadow: 0 0 10px rgba(59,130,246,0.4);
+}
+.map-btn.secondary:hover {
+  background: #334155;
+  color: white;
+}
