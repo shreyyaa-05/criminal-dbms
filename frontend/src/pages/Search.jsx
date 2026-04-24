@@ -13,17 +13,17 @@ const SearchPage = () => {
     crimeType: '',      // crime_name
     prison: '',         // prison_name
     location: '',       // cases.location
-    caseStatus: '',     // cases.status
+    sentenceStatus:''    // cases.status
   });
 
-  const [sortBy, setSortBy] = useState('name');   // name, date_committed, location
+  const [sortBy, setSortBy] = useState('first_name');   // name, date_committed, location
   const [sortOrder, setSortOrder] = useState('asc');
   const [criminalData, setCriminalData] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    loadAllCriminals();
-  }, []);
+  useEffect(()=>{
+setCriminalData([]);
+},[]);
 
   // Fetch all criminals with joined data from backend
   const loadAllCriminals = async () => {
@@ -31,7 +31,7 @@ const SearchPage = () => {
     try {
       // Expecting backend endpoint that returns an array of objects like:
       // { criminal_id, name, gender, crimeType, location, date_committed, caseStatus, prisonName, case_description }
-      const result = await axios.get('http://localhost:8000/api/criminals');
+      const result = await axios.get('http://localhost:8000/allCriminals');
       const sorted = sortResults(result.data, sortBy, sortOrder);
       setCriminalData(sorted);
     } catch (error) {
@@ -80,10 +80,9 @@ const SearchPage = () => {
     setLoading(true);
     try {
       // Backend should accept filters and return filtered & sorted results
-      const result = await axios.post('http://localhost:8000/api/criminals/search', {
+      const result = await axios.post('http://localhost:8000/allCriminals/byfilters', {
         ...filters,
-        sortBy,
-        sortOrder,
+        
       });
       setCriminalData(result.data);
     } catch (error) {
@@ -100,7 +99,7 @@ const SearchPage = () => {
       crimeType: '',
       prison: '',
       location: '',
-      caseStatus: '',
+      sentenceStatus: '',
     });
     loadAllCriminals();
   };
@@ -144,13 +143,33 @@ const SearchPage = () => {
             <div className="filter-column">
               <div className="filter-section">
                 <label htmlFor="crimeType">Crime Type:</label>
-                <input
-                  type="text"
-                  id="crimeType"
-                  value={filters.crimeType}
-                  onChange={(e) => handleFilterChange('crimeType', e.target.value)}
-                  placeholder="e.g., Robbery, Murder"
-                />
+                <select
+id="crimeType"
+value={filters.crimeType}
+onChange={(e)=>
+handleFilterChange(
+'crimeType',
+e.target.value
+)}
+>
+
+<option value="">
+All Crimes
+</option>
+
+<option value="Robbery">
+Robbery
+</option>
+
+<option value="Homicide">
+Homicide
+</option>
+
+<option value="Cyber Fraud">
+Cyber Fraud
+</option>
+
+</select>
               </div>
               <div className="filter-section">
                 <label htmlFor="prison">Prison Name:</label>
@@ -168,20 +187,48 @@ const SearchPage = () => {
             <div className="filter-column">
               <div className="filter-section">
                 <label htmlFor="location">Location (City/Area):</label>
-                <input
-                  type="text"
-                  id="location"
-                  value={filters.location}
-                  onChange={(e) => handleFilterChange('location', e.target.value)}
-                  placeholder="Crime location"
-                />
+                <select
+id="location"
+value={filters.location}
+onChange={(e)=>
+handleFilterChange(
+'location',
+e.target.value
+)}
+>
+
+<option value="">
+All Delhi Districts
+</option>
+
+<option value="Rohini">
+Rohini
+</option>
+
+<option value="Dwarka">
+Dwarka
+</option>
+
+<option value="Saket">
+Saket
+</option>
+
+<option value="Lajpat Nagar">
+Lajpat Nagar
+</option>
+
+<option value="Connaught Place">
+Connaught Place
+</option>
+
+</select>
               </div>
               <div className="filter-section">
-                <label htmlFor="caseStatus">Case Status:</label>
+                <label htmlFor="sentenceStatus">Case Status:</label>
                 <select
-                  id="caseStatus"
-                  value={filters.caseStatus}
-                  onChange={(e) => handleFilterChange('caseStatus', e.target.value)}
+                  id="sentenceStatus"
+                  value={filters.sentenceStatus}
+                  onChange={(e) => handleFilterChange('sentenceStatus', e.target.value)}
                 >
                   <option value="">All</option>
                   <option value="Open">Open</option>
@@ -197,7 +244,9 @@ const SearchPage = () => {
             <div className="filter-section">
               <label htmlFor="sortBy">Sort by:</label>
               <select id="sortBy" value={sortBy} onChange={handleSortChange}>
-                <option value="name">Name</option>
+                <option value="first_name">
+Name
+</option>
                 <option value="date_committed">Date Committed</option>
                 <option value="location">Location</option>
               </select>
@@ -221,11 +270,14 @@ const SearchPage = () => {
         {loading ? (
           <div className="loading">Loading criminals...</div>
         ) : criminalData.length === 0 ? (
-          <div className="no-results">No criminals found. Adjust filters.</div>
+          <div className="no-results">Use filters above and click Search to query criminal records.</div>
         ) : (
-          criminalData.map((criminal) => (
-            <CriminalCard key={criminal.criminal_id} data={criminal} />
-          ))
+          criminalData.map((criminal,index)=>(
+<CriminalCard
+key={index}
+data={criminal}
+/>
+))
         )}
       </div>
       <Footer />

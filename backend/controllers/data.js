@@ -2,17 +2,45 @@ import { db } from "../db.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
-export const getAllCriminals = async (req, res, next) => {
+export const getAllCriminals=(req,res)=>{
 
-  const qry = "SELECT first_name, last_name, address,gender FROM Criminals";
-  db.query(qry, (err, data) => {
-    if (err) {
-      console.log(err);
-    }
-    res.json(data);
+const q=`
+SELECT
+Criminals.criminal_id,
+Criminals.first_name,
+Criminals.last_name,
+Criminals.gender,
+Criminals.address,
+Cases.location,
+Cases.case_description,
+Cases.status,
+Crimes.crime_name,
+Prison.prison_name
 
-  })
-};
+FROM Criminals
+
+LEFT JOIN Cases
+ON Criminals.case_id=Cases.case_id
+
+LEFT JOIN Crimes
+ON Criminals.crime_id=Crimes.crime_id
+
+LEFT JOIN Prison
+ON Criminals.prison_id=Prison.prison_id
+`;
+
+db.query(q,(err,data)=>{
+
+if(err){
+console.log(err);
+return res.status(500).json(err);
+}
+
+return res.json(data);
+
+});
+
+}
 export const getCriminalsByCrime = async (req, res, next) => {
 
   const qry = "SELECT Criminals.first_name, Criminals.last_name,Crimes.crime_name FROM Criminals JOIN Crimes ON Criminals.crime_id=Crimes.crime_id WHERE Crimes.crime_name='Robbery' ";
@@ -67,7 +95,7 @@ export const getComplaint = async (req, res, next) => {
 
 export const getCriminalsByPrison = async (req, res, next) => {
 
-  const qry = "SELECT Criminals.first_name, Criminals.last_name,Crimes.crime_name, Prison.prison_name FROM Criminals JOIN Prison ON Criminals.prison_id=Prison.prison_id JOIN Crimes ON Criminals.crime_id=Crimes.crime_id WHERE Prison.prison_name='Tihar Jail' ";
+  const qry = "SELECT Criminals.first_name, Criminals.last_name,Crimes.crime_name, Prison.prison_name FROM Criminals LEFT JOIN Prison ON Prison.prison_id = Criminals.prison_id JOIN Crimes ON Criminals.crime_id=Crimes.crime_id WHERE Prison.prison_name='Tihar Jail' ";
   db.query(qry, (err, data) => {
     if (err) {
       console.log(err);
