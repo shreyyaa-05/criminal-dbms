@@ -51,6 +51,9 @@ useEffect(()=>{
               <button className="btn-primary" onClick={handleSearch}>
                 Search Records →
               </button>
+              <button className="btn-outline" onClick={() => navigate('/crimemap')}>
+              🗺️ Crime Map
+            </button>
               <button className="btn-outline" onClick={handleComplaint}>
                 Register Complaint
               </button>
