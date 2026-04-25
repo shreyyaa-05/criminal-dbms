@@ -1,36 +1,74 @@
 /* Import Poppins if not already */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap');
 
-.searchContainer{
-font-family:'Poppins',sans-serif;
-background:
-linear-gradient(
-rgba(0,0,0,.82),
-rgba(15,0,0,.88)
-),
-url('./home.jpg') center/cover fixed;
-min-height:100vh;
+/* Reset to avoid any margin/scroll interference */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-.search-page{
-max-width:1150px;
-margin:8rem auto 3rem;
-padding:45px;
-background:rgba(14,14,14,.92);
-backdrop-filter:blur(12px);
-border:1px solid #2a2a2a;
-border-radius:32px;
-box-shadow:0 25px 45px rgba(0,0,0,.6);
+html, body {
+  height: 100%;
 }
 
-.search-page h2{
-text-align:center;
-font-size:46px;
-font-weight:800;
-margin-bottom:2rem;
-color:white;
-letter-spacing:.5px;
-text-shadow:0 4px 16px rgba(0,0,0,.5);
+/* The outer container – no background here anymore */
+.searchContainer {
+  position: relative;   /* needed for the pseudo-element to be contained */
+  min-height: 100vh;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* FIXED BACKGROUND PSEUDO-ELEMENT – stays constant on scroll */
+.searchContainer::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(rgba(0, 0, 0, .82), rgba(15, 0, 0, .88)), url('./sr.jpg') center/cover no-repeat;
+  z-index: -2;           /* push behind everything */
+  pointer-events: none;  /* avoid blocking clicks */
+}
+
+/* Optional: additional layer to smooth things out */
+.searchContainer::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.2); /* subtle extra overlay if needed */
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* Your card container – now with a softer background to reduce “separation” */
+.search-page {
+  max-width: 1150px;
+  margin: 8rem auto 3rem;
+  padding: 45px;
+  background: rgba(10, 10, 10, 0.75);  /* slightly less opaque */
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(139, 0, 0, 0.4);
+  border-radius: 32px;
+  box-shadow: 0 25px 45px rgba(0, 0, 0, .6);
+  position: relative;    /* keeps it above the fixed background */
+  z-index: 1;
+}
+
+/* ... rest of your existing styles remain ... */
+
+.search-page h2 {
+  text-align: center;
+  font-size: 46px;
+  font-weight: 800;
+  margin-bottom: 2rem;
+  color: white;
+  letter-spacing: .5px;
+  text-shadow: 0 4px 16px rgba(0, 0, 0, .5);
 }
 
 .filter-container {
@@ -49,31 +87,24 @@ text-shadow:0 4px 16px rgba(0,0,0,.5);
   margin-bottom: 15px;
 }
 
-.filter-section label{
-color:#ff7777;
-font-weight:600;
+.filter-section label {
+  color: #ff7777;
+  font-weight: 600;
 }
 
 .filter-section input,
-.filter-section select{
-background:#121212;
-border:1px solid #3a3a3a;
-color:#fff;
-padding:14px 16px;
-border-radius:14px;
-}
-
-.filter-section input:focus,
-.filter-section select:focus{
-border-color:#b30000;
-box-shadow:0 0 0 2px rgba(179,0,0,.25);
+.filter-section select {
+  background: #121212;
+  border: 1px solid #3a3a3a;
+  color: #fff;
+  padding: 14px 16px;
+  border-radius: 14px;
 }
 
 .filter-section input:focus,
 .filter-section select:focus {
-  border-color: #007BFF;
-  outline: none;
-  box-shadow: 0 0 0 2px rgba(0,123,255,0.2);
+  border-color: #b30000;
+  box-shadow: 0 0 0 2px rgba(179, 0, 0, .25);
 }
 
 .sort-order-btn {
@@ -86,6 +117,7 @@ box-shadow:0 0 0 2px rgba(179,0,0,.25);
   width: 100%;
   font-weight: 500;
 }
+
 .sort-order-btn:hover {
   background: #5a6268;
 }
@@ -97,25 +129,25 @@ box-shadow:0 0 0 2px rgba(179,0,0,.25);
   margin-top: 20px;
 }
 
-.search-btn{
-background:linear-gradient(95deg,#8b0000,#d00000);
-color:white;
-box-shadow:0 4px 14px rgba(180,0,0,.4);
+.search-btn {
+  background: linear-gradient(95deg, #8b0000, #d00000);
+  color: white;
+  box-shadow: 0 4px 14px rgba(180, 0, 0, .4);
 }
 
-.search-btn:hover{
-transform:translateY(-2px);
-background:#d00000;
+.search-btn:hover {
+  transform: translateY(-2px);
+  background: #d00000;
 }
 
-.reset-btn{
-background:transparent;
-border:2px solid #8b0000;
-color:white;
+.reset-btn {
+  background: transparent;
+  border: 2px solid #8b0000;
+  color: white;
 }
 
-.reset-btn:hover{
-background:#8b0000;
+.reset-btn:hover {
+  background: #8b0000;
 }
 
 /* Criminal Cards Grid */
@@ -127,40 +159,20 @@ background:#8b0000;
   padding: 20px;
 }
 
-/* --- Uiverse Card Style (as requested) --- */
-.card{
-background:rgba(18,18,18,.96);
-border:1px solid #292929;
-border-radius:28px;
-padding:32px;
-box-shadow:0 20px 30px -12px rgba(0,0,0,.6);
-transition:.35s;
+/* Card Style - Blue bubble removed */
+.card {
+  background: rgba(18, 18, 18, .96);
+  border: 1px solid #292929;
+  border-radius: 28px;
+  padding: 32px;
+  box-shadow: 0 20px 30px -12px rgba(0, 0, 0, .6);
+  transition: .35s;
 }
 
-.card:hover{
-transform:translateY(-8px);
-border-color:#8b0000;
-box-shadow:
-0 28px 38px -12px rgba(180,0,0,.35);
-}
-
-.card:before {
-  content: '';
-  position: absolute;
-  z-index: -1;
-  top: -16px;
-  right: -16px;
-  background: linear-gradient(135deg, #364a60, #384c6c);
-  height: 32px;
-  width: 32px;
-  border-radius: 32px;
-  transform: scale(1);
-  transform-origin: 50% 50%;
-  transition: transform 0.35s ease-out;
-}
-
-.card:hover:before {
-  transform: scale(28);
+.card:hover {
+  transform: translateY(-8px);
+  border-color: #8b0000;
+  box-shadow: 0 28px 38px -12px rgba(180, 0, 0, .35);
 }
 
 .card:hover .small-desc {
@@ -181,13 +193,13 @@ box-shadow:
   margin-bottom: 0.5em;
 }
 
-.small-desc{
-color:#cccccc;
-line-height:1.8;
+.small-desc {
+  color: #cccccc;
+  line-height: 1.8;
 }
 
-.go-corner{
-background:#8b0000;
+.go-corner {
+  background: #8b0000;
 }
 
 .go-arrow {
@@ -207,12 +219,13 @@ background:#8b0000;
   display: inline-block;
   margin-top: 8px;
   font-size: 0.7rem;
-  background: rgba(0,0,0,0.1);
+  background: rgba(0, 0, 0, 0.1);
   padding: 2px 6px;
   border-radius: 20px;
 }
 
-.loading, .no-results {
+.loading,
+.no-results {
   text-align: center;
   padding: 40px;
   font-size: 1.2rem;
@@ -226,13 +239,16 @@ background:#8b0000;
     margin: 6rem 1rem;
     padding: 15px;
   }
+
   .filter-container {
     flex-direction: column;
   }
+
   .criminals-list {
     margin: 1rem;
     grid-template-columns: 1fr;
   }
+
   .card {
     max-width: 100%;
   }
@@ -243,26 +259,27 @@ background:#8b0000;
   border-radius: 8px;
   margin-top: 12px;
 }
-.status-chip{
-display:inline-block;
-padding:6px 14px;
-border-radius:50px;
-font-size:12px;
-font-weight:700;
-margin-bottom:16px;
+
+.status-chip {
+  display: inline-block;
+  padding: 6px 14px;
+  border-radius: 50px;
+  font-size: 12px;
+  font-weight: 700;
+  margin-bottom: 16px;
 }
 
-.critical{
-background:#7a0000;
-color:#ffb3b3;
+.critical {
+  background: #7a0000;
+  color: #ffb3b3;
 }
 
-.high{
-background:#b34700;
-color:#ffddcc;
+.high {
+  background: #b34700;
+  color: #ffddcc;
 }
 
-.medium{
-background:#4d4d00;
-color:#ffffbb;
+.medium {
+  background: #4d4d00;
+  color: #ffffbb;
 }

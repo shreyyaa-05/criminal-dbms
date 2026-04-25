@@ -20,9 +20,30 @@ const SearchPage = () => {
   const [sortOrder, setSortOrder] = useState('asc');
   const [criminalData, setCriminalData] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [crimeOptions,setCrimeOptions]=useState([]);
+const [areaOptions,setAreaOptions]=useState([]);
+const [prisonOptions,setPrisonOptions]=useState([]);
+const [statusOptions,setStatusOptions]=useState([]);
+
+const [results,setResults]=useState([]);
 
   useEffect(()=>{
 loadAllCriminals();
+},[]);
+useEffect(()=>{
+
+axios.get("http://localhost:8000/allCriminals/byCrimes")
+.then(res=>setCrimeOptions(res.data));
+
+axios.get("http://localhost:8000/allCriminals/hotspots")
+.then(res=>setAreaOptions(res.data));
+
+axios.get("http://localhost:8000/allCriminals/prisons")
+.then(res=>setPrisonOptions(res.data));
+
+axios.get("http://localhost:8000/allCriminals/statuses")
+.then(res=>setStatusOptions(res.data));
+
 },[]);
 
   // Fetch all criminals with joined data from backend
@@ -152,21 +173,41 @@ e.target.value
 )}
 >
 <option value="">All Crimes</option>
-<option value="Robbery">Robbery</option>
-<option value="Homicide">Homicide</option>
-<option value="Cyber Fraud">Cyber Fraud</option>
-<option value="Money Laundering">Money Laundering</option>
+
+{crimeOptions.map(crime=>(
+<option
+key={crime.crime_id}
+value={crime.crime_id}
+>
+{crime.crime_name}
+</option>
+))}
 </select>
               </div>
               <div className="filter-section">
                 <label htmlFor="prison">Prison Name:</label>
-                <input
-                  type="text"
-                  id="prison"
-                  value={filters.prison}
-                  onChange={(e) => handleFilterChange('prison', e.target.value)}
-                  placeholder="Prison facility"
-                />
+                <select
+value={filters.prison}
+onChange={(e)=>
+handleFilterChange(
+'prison',
+e.target.value
+)}
+>
+<option value="">
+All Prisons
+</option>
+
+{prisonOptions.map(p=>(
+<option
+key={p.prison_id}
+value={p.prison_id}
+>
+{p.prison_name}
+</option>
+))}
+
+</select>
               </div>
             </div>
 

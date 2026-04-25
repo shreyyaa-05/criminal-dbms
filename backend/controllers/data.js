@@ -167,74 +167,118 @@ export const getCriminalsByStatus = async (req, res, next) => {
 
 
 
-export const getCriminalsByFilters=(req,res)=>{
+export const getCriminalsByFilters = (req,res)=>{
 
 const filters=req.body;
-
 const conditions=[];
 const values=[];
 
-if(filters.crimeType){
-conditions.push(
-'Crimes.crime_name = ?'
+
+/* NAME SEARCH (first or last name) */
+if(filters.name?.trim()){
+conditions.push(`
+(
+Criminals.first_name LIKE ?
+OR Criminals.last_name LIKE ?
+)
+`);
+values.push(
+`%${filters.name}%`,
+`%${filters.name}%`
 );
-values.push(filters.crimeType);
 }
 
-if(filters.prison){
+
+/* CRIME */
+/* CRIME */
+if(filters.crimeType && filters.crimeType!=="all"){
 conditions.push(
-'Prison.prison_name = ?'
+'Criminals.crime_id = ?'
 );
-values.push(filters.prison);
+values.push(Number(filters.crimeType));
 }
 
-if(filters.name){
-conditions.push(
-'Criminals.first_name LIKE ?'
-);
-values.push(`%${filters.name}%`);
-}
 
-if(filters.location){
+/* AREA */
+if(filters.location && filters.location!=="all"){
 conditions.push(
-'location = ?'
+'Cases.location = ?'
 );
 values.push(filters.location);
 }
 
-if(filters.sentenceStatus){
+
+/* STATUS */
+if(filters.sentenceStatus && filters.sentenceStatus!=="all"){
 conditions.push(
-'status = ?'
+'Cases.status = ?'
 );
 values.push(filters.sentenceStatus);
 }
 
-let sql = `
-SELECT
+
+/* PRISON */
+if(filters.prison && filters.prison!=="all"){
+conditions.push(
+'Prison.prison_id = ?'
+);
+values.push(Number(filters.prison));
+}
+
+
+
+let sql=`
+SELECT DISTINCT
 Criminals.criminal_id,
 Criminals.first_name,
 Criminals.last_name,
 Criminals.gender,
 Criminals.address,
-Cases.location,
+
+Cases.case_id,
 Cases.case_description,
+Cases.location,
 Cases.status,
+DATE_FORMAT(Cases.date_committed,'%Y-%m-%d') as date_committed,
+
+Crimes.crime_id,
 Crimes.crime_name,
-Prison.prison_name
+
+Prison.prison_id,
+Prison.prison_name,
+
+Area.area_id,
+Area.area_name,
+Area.police_station
+
 FROM Criminals
-JOIN Cases
+
+LEFT JOIN Cases
 ON Criminals.case_id = Cases.case_id
-JOIN Crimes
+
+LEFT JOIN Crimes
 ON Criminals.crime_id = Crimes.crime_id
+
 LEFT JOIN Prison
 ON Criminals.prison_id = Prison.prison_id
+
+LEFT JOIN Area
+ON Cases.area_id = Area.area_id
 `;
 
-if(conditions.length>0){
+
+
+if(conditions.length){
 sql +=
-' WHERE ' + conditions.join(' AND ');
+' WHERE ' +
+conditions.join(' AND ');
 }
 
+sql += `
+ ORDER BY date_committed DESC
+`;
+console.log(sql);
+console.log(values);
 db.query(
 sql,
 values,
@@ -243,6 +287,7 @@ if(err){
 console.error(err);
 return res.status(500).json(err);
 }
+
 res.json(data);
 }
 );
@@ -343,7 +388,7 @@ vals.push(req.query.area_id);
 
 if(req.query.crime_id && req.query.crime_id !== "all"){
 conditions.push(
-"Criminals.crime_id = ?"
+'Crimes.crime_name = ?'
 );
 vals.push(req.query.crime_id);
 }
@@ -421,4 +466,33 @@ return res.status(500).json(err);
 res.json(data);
 });
 
+};
+export const getPrisons=(req,res)=>{
+
+db.query(
+`
+SELECT
+prison_id,
+prison_name
+FROM Prison
+ORDER BY prison_name
+`,
+(err,data)=>{
+if(err){
+return res.status(500).json(err);
+}
+res.json(data);
+}
+);
+
+};
+export const getStatuses=(req,res)=>{
+db.query(`
+SELECT DISTINCT status
+FROM Cases
+ORDER BY status
+`,(err,data)=>{
+if(err) return res.status(500).json(err);
+res.json(data);
+});
 };
