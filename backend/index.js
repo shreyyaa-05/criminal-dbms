@@ -11,6 +11,15 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
+
+ 
+ //MIDDLEWARE FOR ROUTES CONNECTION
+app.use("/allCriminals",criminalRoute); 
+
+
+app.get("/", (req, res) => {
+   res.send("jaldi waha se hato");
+})
 app.use((err, req, res, next) => {
     const errorStatus = err.status || 500;
     const errorMessage = err.message || "Something went wrong!";
@@ -21,15 +30,6 @@ app.use((err, req, res, next) => {
       stack: err.stack,
     });
   });
- 
- //MIDDLEWARE FOR ROUTES CONNECTION
-app.use("/allCriminals",criminalRoute); 
-
-
-app.get("/", (req, res) => {
-   res.send("jaldi waha se hato");
-})
-
 app.listen(8000, () => {
     console.log("Server is runnig on port 8000!")
 })
