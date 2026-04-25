@@ -496,3 +496,36 @@ if(err) return res.status(500).json(err);
 res.json(data);
 });
 };
+export const getCrimeStats = (req,res)=>{
+
+const q = `
+SELECT
+Crimes.crime_name,
+COUNT(*) as count
+FROM Criminals
+JOIN Crimes
+ON Criminals.crime_id = Crimes.crime_id
+GROUP BY Crimes.crime_name
+ORDER BY count DESC
+`;
+
+db.query(q,(err,data)=>{
+if(err){
+console.error(err);
+return res.status(500).json(err);
+}
+
+const totalCases =
+data.reduce(
+(sum,row)=>sum+row.count,
+0
+);
+
+res.json({
+totalCases,
+topCrimes:data
+});
+
+});
+
+};

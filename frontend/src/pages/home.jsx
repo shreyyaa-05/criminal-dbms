@@ -11,15 +11,32 @@ import heroImage from './home.jpg'; // replace with your actual image
 export default function Home() {
   const navigate = useNavigate();
   const [featuredCases,setFeaturedCases]=useState([]);
+  const [crimeStats,setCrimeStats]=useState({
+totalCases:0,
+topCrimes:[]
+});
 
 useEffect(()=>{
- const loadCases=async()=>{
- const res=await axios.get(
- "http://localhost:8000/allCriminals/featuredCases"
- );
- setFeaturedCases(res.data);
- };
- loadCases();
+
+const loadData=async()=>{
+
+const casesRes=await axios.get(
+"http://localhost:8000/allCriminals/featuredCases"
+);
+
+setFeaturedCases(casesRes.data);
+
+
+const statsRes=await axios.get(
+"http://localhost:8000/allCriminals/crimeStats"
+);
+
+setCrimeStats(statsRes.data);
+
+};
+
+loadData();
+
 },[]);
 
   // Original navigation actions – unchanged
@@ -60,8 +77,10 @@ useEffect(()=>{
             </div>
             <div className="hero-stats">
               <div className="stat-item">
-                <span className="stat-number">2,847+</span>
-                <span className="stat-label">Cases Solved</span>
+                <span className="stat-number">
+{crimeStats.totalCases}
+</span>
+                <span className="stat-label">Cases Recorded</span>
               </div>
               <div className="stat-item">
                 <span className="stat-number">156</span>
