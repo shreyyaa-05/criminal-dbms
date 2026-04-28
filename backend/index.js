@@ -29,7 +29,7 @@ app.get("/", (req, res) => {
    res.send("jaldi waha se hato");
 })
 cron.schedule(
-'*/10 * * * *',
+'0 * * * *',
 ()=>{
 
 console.log("Refreshing Delhi live news...");
