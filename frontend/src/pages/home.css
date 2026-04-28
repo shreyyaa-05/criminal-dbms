@@ -226,14 +226,18 @@ html {
   font-size: 48px;
   margin-bottom: 24px;
 }
-.card-title {
-  font-size: 36px;
-  font-weight: 800;
-  margin-bottom: 20px;
-  background: linear-gradient(135deg, #fff, #cc5555);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+.card-title{
+font-size:38px;
+font-weight:800;
+margin-bottom:20px;
+
+color:#ffffff !important;
+
+text-shadow:
+0 0 2px rgba(255,255,255,.5),
+0 0 8px rgba(255,80,80,.35);
+
+letter-spacing:.5px;
 }
 .card-description {
   color: #bbbbbb;
