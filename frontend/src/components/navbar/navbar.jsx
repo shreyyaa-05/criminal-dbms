@@ -1,6 +1,7 @@
 import '../navbar/navbar.css';
 import img from '../images/logo.jpg'
 
+
 function Navbar() {
   return (
     <>
@@ -15,10 +16,10 @@ function Navbar() {
 
         <ul className="navul">
           <li className='navbarli'><a className="navbari" href="/">Home</a></li>
-          <li className='navbarli'><a className="navbari" href="/search" >Search Record</a></li>
+          <li className='navbarli'><a className="navbari" href="/search" >DashBoard</a></li>
           <li className='navbarli'><a className="navbari" href="/news">News</a></li>
-          <li className='navbarli'><a className="navbari" href="/complaint">Register Complaint</a></li>
-          <li className='navbarli'><a className="navbari" href="/login">Login</a></li>
+          <li className='navbarli'><a className="navbari" href="/crimemap">Maps</a></li>
+          
         </ul>
       </div>
 

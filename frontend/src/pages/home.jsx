@@ -6,7 +6,8 @@ import Navbar from '../components/navbar/navbar';
 import Footer from '../components/footer/footer';
 
 // Import your image (adjust path as needed)
-import heroImage from './home.jpg'; // replace with your actual image
+import heroImage from './home.jpg'; 
+import mapImage from './map.jpg';
 
 export default function Home() {
   const navigate = useNavigate();
@@ -57,7 +58,7 @@ loadData();
               <span className="hero-badge">CRIME INTELLIGENCE PORTAL</span>
             </div>
             <h1 className="hero-title">
-              LANDING PAGE <br />
+              CasaVault <br />
               <span className="hero-title-accent">TEMPLATE</span>
             </h1>
             <p className="hero-description">
@@ -71,9 +72,7 @@ loadData();
               <button className="btn-outline" onClick={() => navigate('/crimemap')}>
               🗺️ Crime Map
             </button>
-              <button className="btn-outline" onClick={handleComplaint}>
-                Register Complaint
-              </button>
+              
             </div>
             <div className="hero-stats">
               <div className="stat-item">
@@ -93,8 +92,10 @@ loadData();
             </div>
           </div>
           <div className="hero-image">
-            <img src={heroImage} alt="Crime investigation" />
-          </div>
+          <a href="/crimemap" onClick={(e) => { e.preventDefault(); navigate('/crimemap'); }}>
+            <img src={mapImage} alt="Crime Map - Click to view" style={{ cursor: 'pointer' }} />
+          </a>
+        </div>
         </div>
       </section>
 
@@ -103,7 +104,7 @@ loadData();
         <div className="dual-container">
           <div className="crime-card">
             <div className="card-icon">⚖️</div>
-            <h2 className="card-title">CRIME</h2>
+            <h2 className="card-title">DashBoards</h2>
             <p className="card-description">
               Comprehensive database of criminal records, forensic evidence, and historical case data.
               Access real-time crime mapping and pattern analysis.
@@ -119,18 +120,18 @@ loadData();
           </div>
           <div className="investigation-card">
             <div className="card-icon">🕵️</div>
-            <h2 className="card-title">INVESTIGATION</h2>
+            <h2 className="card-title">Crime News & Alerts</h2>
             <p className="card-description">
-              Advanced investigation suite with case management, digital forensics, and collaborative tools.
-              Streamline your investigative workflow.
+              Stay updated with the latest crime incidents across different regions in real time.
+Track emerging threats, breaking cases, and high-risk areas using live data and news insights.
             </p>
             <ul className="card-features">
-              <li>Case management system</li>
-              <li>Digital forensics tools</li>
-              <li>Team collaboration hub</li>
+              <li>Live crime updates & breaking news</li>
+              <li>Regional crime alerts and trends</li>
+              <li>Verified reports and case highlights</li>
             </ul>
-            <button className="card-btn" onClick={handleComplaint}>
-              START INVESTIGATION →
+            <button className="card-btn" onClick={() => navigate('/news')}>
+              VIEW CRIME NEWS →
             </button>
           </div>
         </div>

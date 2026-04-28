@@ -7,7 +7,7 @@ import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
 import 'leaflet.heat';
 import { Chart } from 'chart.js/auto';
 import axios from 'axios';
-import './crimemap.css';   // same folder
+import './crimemap.css';   
 
 // Fix Leaflet default icon issue
 delete L.Icon.Default.prototype._getIconUrl;
@@ -258,62 +258,65 @@ chartRef.current=null;
     
 
   return (
-    <div style={{ padding: '1rem', background: '#0f172a', borderRadius: '24px', marginTop: '1rem' }}>
-      {/* Filters */}
-      <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginBottom: '1rem', background: '#1e293b', padding: '1rem', borderRadius: '20px' }}>
-        <select value={filters.area} onChange={e => setFilters({...filters, area: e.target.value})}>
-          <option value="all">All Areas</option>
-          {areas.map(a => (
+    <div style={{ paddingTop: '80px' }}>
+        <div style={{ padding: '1rem', background: '#0f172a', borderRadius: '24px', marginTop: '1rem' }}>
+          {/* Filters */}
+          <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginBottom: '1rem', background: '#1e293b', padding: '1rem', borderRadius: '20px' }}>
+            <select value={filters.area} onChange={e => setFilters({...filters, area: e.target.value})}>
+              <option value="all">All Areas</option>
+              {areas.map(a => (
 
-<option
-key={a.area_id}
-value={a.area_id}
->
-{a.area_name}
-</option>
+    <option
+    key={a.area_id}
+    value={a.area_id}
+    >
+    {a.area_name}
+    </option>
 
-))}
-        </select>
-        <select value={filters.crime} onChange={e => setFilters({...filters, crime: e.target.value})}>
-          <option value="all">All Crimes</option>
-          {crimes.map((c,index)=>(
-<option
-key={`${c.crime_id}-${index}`}
-value={c.crime_id}
->
-{c.crime_name}
-</option>
-))}
-        </select>
-        <input type="date" value={filters.fromDate} onChange={e => setFilters({...filters, fromDate: e.target.value})} placeholder="From" />
-        <input type="date" value={filters.toDate} onChange={e => setFilters({...filters, toDate: e.target.value})} placeholder="To" />
-        <button className="map-btn primary" onClick={fetchCases}>Apply</button>
-        <button className="map-btn secondary" onClick={() => setFilters({ area: 'all', crime: 'all', fromDate: '', toDate: '' })}>Reset</button>
-        <button className="map-btn secondary" onClick={() => setHeatActive(!heatActive)}>🔥 Heatmap {heatActive ? 'ON' : 'OFF'}</button>
-        <button className="map-btn secondary" onClick={toggleEvidence}>📌 Evidence {evidenceActive ? 'ON' : 'OFF'}</button>
-      </div>
-
-      {/* Map + Charts */}
-      <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap' }}>
-        <div style={{ flex: 2, minWidth: '300px', background: '#1e293b', borderRadius: '24px', overflow: 'hidden' }}>
-          <div id="crime-map" style={{ height: '450px', width: '100%' }}></div>
-        </div>
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          <div style={{ background: '#1e293b', borderRadius: '20px', padding: '1rem' }}>
-            <h3 style={{ color: '#e2e8f0', marginBottom: '0.5rem' }}>⏱️ Peak Time (Hourly)</h3>
-            <canvas key={cases.length} id="peak-time-chart" height="200" style={{ width: '100%' }}></canvas>
+    ))}
+            </select>
+            <select value={filters.crime} onChange={e => setFilters({...filters, crime: e.target.value})}>
+              <option value="all">All Crimes</option>
+              {crimes.map((c,index)=>(
+    <option
+    key={`${c.crime_id}-${index}`}
+    value={c.crime_id}
+    >
+    {c.crime_name}
+    </option>
+    ))}
+            </select>
+            <input type="date" value={filters.fromDate} onChange={e => setFilters({...filters, fromDate: e.target.value})} placeholder="From" />
+            <input type="date" value={filters.toDate} onChange={e => setFilters({...filters, toDate: e.target.value})} placeholder="To" />
+            <button className="map-btn primary" onClick={fetchCases}>Apply</button>
+            <button className="map-btn secondary" onClick={() => setFilters({ area: 'all', crime: 'all', fromDate: '', toDate: '' })}>Reset</button>
+            <button className="map-btn secondary" onClick={() => setHeatActive(!heatActive)}> Heatmap {heatActive ? 'ON' : 'OFF'}</button>
+            <button className="map-btn secondary" onClick={toggleEvidence}> Evidence {evidenceActive ? 'ON' : 'OFF'}</button>
           </div>
-          <div style={{ background: '#1e293b', borderRadius: '20px', padding: '1rem' }}>
-            <h3 style={{ color: '#e2e8f0', marginBottom: '0.5rem' }}>📊 Top Crime Types</h3>
-            <table style={{ width: '100%', fontFamily: 'monospace', color: '#cbd5e1', borderCollapse: 'collapse' }}>
-              <thead><tr><th>Crime Type</th><th>Count</th></tr></thead>
-              <tbody id="crime-table-body"></tbody>
-            </table>
+
+          {/* Map + Charts */}
+          <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap' }}>
+            <div style={{ flex: 2, minWidth: '300px', background: '#1e293b', borderRadius: '24px', overflow: 'hidden' }}>
+              <div id="crime-map" style={{ height: '450px', width: '100%' }}></div>
+            </div>
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <div style={{ background: '#1e293b', borderRadius: '20px', padding: '1rem' }}>
+                <h3 style={{ color: '#e2e8f0', marginBottom: '0.5rem' }}>⏱️ Peak Time (Hourly)</h3>
+                <canvas key={cases.length} id="peak-time-chart" height="200" style={{ width: '100%' }}></canvas>
+              </div>
+              <div style={{ background: '#1e293b', borderRadius: '20px', padding: '1rem' }}>
+                <h3 style={{ color: '#e2e8f0', marginBottom: '0.5rem' }}>📊 Top Crime Types</h3>
+                <table style={{ width: '100%', fontFamily: 'monospace', color: '#cbd5e1', borderCollapse: 'collapse' }}>
+                  <thead><tr><th>Crime Type</th><th>Count</th></tr></thead>
+                  <tbody id="crime-table-body"></tbody>
+                </table>
+              </div>
+            </div>
           </div>
         </div>
+
       </div>
-    </div>
-  );
-};
+      );
+    };
 
 export default CrimeMap;

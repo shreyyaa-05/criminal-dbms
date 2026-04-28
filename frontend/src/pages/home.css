@@ -279,7 +279,7 @@ html {
 
 /* ========== CASES PREVIEW ========== */
 .cases-preview {
-  background: rgba(3, 3, 3, 0.85);
+  background: rgba(124, 66, 66, 0.85);
   backdrop-filter: blur(2px);
   padding: 85px 5% 100px;
 }
