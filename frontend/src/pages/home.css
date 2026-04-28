@@ -52,7 +52,7 @@ html {
 
 .hero-container {
   position: relative;
-  z-index: 2;
+  z-index: 1;
   max-width: 1300px;
   margin: 0 auto;
   padding: 120px 5% 80px;
