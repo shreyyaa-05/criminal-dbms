@@ -48,18 +48,10 @@ const MostWanted = () => {
                     src={imageUrl} 
                     alt={criminal.name} 
                     className="suspect-img"
-                    onError={(e) => {
-                        e.target.style.display = 'none';
-                        e.target.parentElement.innerHTML = `
-                            <div class="img-placeholder">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="70" height="70">
-                                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" fill="#C28B55"/>
-                                </svg>
-                                <span style="font-size:1.4rem;font-weight:bold;">NO RECENT IMAGE</span>
-                                <span style="font-size:0.9rem;">${criminal.name}</span>
-                            </div>
-                        `;
-                    }}
+                    onError={(e)=>{
+e.target.onerror=null;
+e.target.src="https://via.placeholder.com/400x500?text=WANTED";
+}}
                 />
             );
         } else {
@@ -77,47 +69,86 @@ const MostWanted = () => {
 
     // Fetch criminals from backend
     const fetchMostWantedList = async () => {
-        setIsLoading(true);
-        setStatusMsg("⏳ fetching from CriminalDB backend...");
-        
-        try {
-            let response;
-            try {
-                response = await fetch('/mostwanted');
-                if (!response.ok) throw new Error(`HTTP ${response.status}`);
-            } catch(e) {
-                console.warn("First attempt failed, try /api/mostwanted", e);
-                response = await fetch('/api/mostwanted');
-                if (!response.ok) throw new Error(`API error ${response.status}`);
-            }
-            
-            const data = await response.json();
-            let criminalsArray = Array.isArray(data) ? data : (data.criminals || data.data || []);
-            
-            if (criminalsArray.length === 0) throw new Error("empty list");
-            
-            const mappedList = criminalsArray.map(c => ({
-                id: c.id || c._id,
-                name: c.name || c.fullname || "Unnamed suspect",
-                reward: c.reward || c.bounty || 0,
-                description: c.description || "No description provided by agency.",
-                contact: c.contact_phone || c.contact || "123-456-7890",
-                imageUrl: c.imageUrl || c.photo_url || null,
-                extra_link: c.link || c.report_link || "https://www.warner-spencer.fbi/criminals"
-            }));
-            
-            setCriminalsList(mappedList);
-            setCurrentIndex(0);
-            setStatusMsg(`🕵️‍♂️ DATABASE ACTIVE • ${mappedList.length} suspects loaded`);
-        } catch (err) {
-            console.error("Backend fetch error:", err);
-            setStatusMsg("⚠️ using emergency dataset (backend unreachable)");
-            setCriminalsList(FALLBACK_MOST_WANTED);
-            setCurrentIndex(0);
-        } finally {
-            setIsLoading(false);
-        }
-    };
+
+setIsLoading(true);
+setStatusMsg("⏳ Fetching from CriminalDB backend...");
+
+try {
+
+const response = await fetch(
+'http://localhost:8000/api/mostwanted'
+);
+
+if(!response.ok){
+throw new Error(`HTTP ${response.status}`);
+}
+
+const data = await response.json();
+
+let criminalsArray =
+Array.isArray(data)
+? data
+: (data.criminals || data.data || []);
+
+if(criminalsArray.length===0){
+throw new Error("No suspects returned");
+}
+
+const mappedList = criminalsArray.map(c => ({
+
+id: c.criminal_id,
+
+name: c.name,
+
+reward: c.reward,
+
+description: c.description,
+
+contact: "100",
+
+imageUrl:
+c.criminal_id===30006
+? "/mugshots/riya.jpg"
+: c.mugshot_url,
+
+extra_link:"#"
+
+}));
+
+setCriminalsList(mappedList);
+
+setCurrentIndex(0);
+
+setStatusMsg(
+`🕵 DATABASE ACTIVE • ${mappedList.length} suspects loaded`
+);
+
+}
+
+catch(err){
+
+console.error(
+"Backend fetch error:",
+err
+);
+
+setStatusMsg(
+"Backend unavailable"
+);
+
+setCriminalsList([]);
+
+setCurrentIndex(0);
+
+}
+
+finally{
+
+setIsLoading(false);
+
+}
+
+};
 
     // Navigation handlers
     const goPrev = () => {
@@ -147,7 +178,7 @@ const MostWanted = () => {
     return (
         <div className="wanted-container">
             <div className="wanted-inner">
-                <div className="agency-header">WARNER &amp; SPENCER</div>
+                <div className="agency-header"> CASEVAULT MOST WANTED DIVISION</div>
                 <div className="wanted-badge"><span>WANTED</span></div>
 
                 <div className="wanted-content">
