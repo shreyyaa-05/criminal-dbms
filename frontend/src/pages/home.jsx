@@ -58,8 +58,8 @@ loadData();
               <span className="hero-badge">CRIME INTELLIGENCE PORTAL</span>
             </div>
             <h1 className="hero-title">
-              CasaVault <br />
-              <span className="hero-title-accent">TEMPLATE</span>
+              CaseVault <br />
+              <span className="hero-title-accent">DELHI</span>
             </h1>
             <p className="hero-description">
               Advanced crime analytics, real-time case tracking, and digital investigation tools.

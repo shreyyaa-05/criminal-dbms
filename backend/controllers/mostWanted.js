@@ -6,7 +6,7 @@ export const getMostWanted = (req,res)=>{
 db.query(
 `
 SELECT *
-FROM most_wanted
+FROM most_wanted_view
 LIMIT 10
 `,
 (err,data)=>{
@@ -42,7 +42,7 @@ END
 
 AVG(threat_score) avg_threat
 
-FROM most_wanted
+FROM most_wanted_view
 `,
 (err,data)=>{
 

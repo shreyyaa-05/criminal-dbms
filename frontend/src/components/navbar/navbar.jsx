@@ -16,7 +16,7 @@ function Navbar() {
 
         <ul className="navul">
           <li className='navbarli'><a className="navbari" href="/">Home</a></li>
-          <li className='navbarli'><a className="navbari" href="/search" >DashBoard</a></li>
+          <li className='navbarli'><a className="navbari" href="/search" >Dashboard</a></li>
           <li className='navbarli'><a className="navbari" href="/news">News</a></li>
           <li className='navbarli'><a className="navbari" href="/crimemap">Maps</a></li>
           
