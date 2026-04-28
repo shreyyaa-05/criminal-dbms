@@ -1,4 +1,4 @@
-// App.js - updated version
+// ===== ALL IMPORTS GO AT THE TOP =====
 import logo from './logo.svg';
 import './App.css';
 import Home from '../src/pages/home';
@@ -10,20 +10,21 @@ import NewsPage from './pages/news';
 import ComplaintState from './context/complaint/ComplaintState';
 import AuthForm from './components/login/register/login';
 import ComplaintList from './pages/ComplaintList';
-import Navbar from './components/navbar/navbar';  // ✅ ADD THIS IMPORT
-
+import MostWanted from './pages/MostWanted';
+import Navbar from './components/navbar/navbar';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet.markercluster/dist/MarkerCluster.css';
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
 
+// ===== THEN THE COMPONENT =====
 function App() {
   return (
     <ComplaintState>
       <Router>   
-        {}
+        {/* Navbar component */}
         <Navbar />
         
-        {}
+        {/* Main content area */}
         <div className="app-content">
           <Routes>
             <Route exact path='/' element={<Home/>} />
@@ -34,6 +35,7 @@ function App() {
             <Route exact path='/news' element={<NewsPage/>} />
             <Route exact path='/login' element={<AuthForm/>} />
             <Route exact path='/admin' element={<ComplaintList/>} />
+            <Route path="/mostwanted" element={<MostWanted />} />
           </Routes>
         </div>
       </Router> 
