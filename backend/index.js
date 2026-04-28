@@ -6,6 +6,7 @@ import criminalRoute from "./routes/data.js";
 import newsRoutes from "./routes/news.js";
 import cron from "node-cron";
 import { fetchDelhiCrimeNews } from "./controllers/news.js";
+import mostWantedRoutes from "./routes/mostWanted.js";
 
 
 dotenv.config();
@@ -19,6 +20,10 @@ app.use(cors());
  //MIDDLEWARE FOR ROUTES CONNECTION
 app.use("/allCriminals",criminalRoute); 
 app.use("/api/news",newsRoutes);
+app.use(
+"/api/mostwanted",
+mostWantedRoutes
+);
 
 app.get("/", (req, res) => {
    res.send("jaldi waha se hato");
