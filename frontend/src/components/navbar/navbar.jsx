@@ -11,7 +11,7 @@ function Navbar() {
         <div className="navnamenlogo">
 
         <a href='/'><img src={img} alt="" className="logoimg" href="/" /></a>
-          <h3 className='Name'><a className="navbari" href='/'>WikiCrime</a></h3>
+          <h3 className='Name'><a className="navbari" href='/'>CaseVault</a></h3>
         </div>
 
         <ul className="navul">
