@@ -6,7 +6,7 @@ import Navbar from '../components/navbar/navbar';
 import Footer from '../components/footer/footer';
 
 // Import your image (adjust path as needed)
-import heroImage from './home.jpg'; 
+import heroImage from '../components/images/logo.jpg';
 import mapImage from './map.jpg';
 
 export default function Home() {
